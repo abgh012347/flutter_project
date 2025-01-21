@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import './start.dart';
+import './best_recommand.dart';
+import './location_recommand.dart';
+
+
 
 void main() {
   runApp(const MyApp());
