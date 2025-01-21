@@ -11,7 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      routes: {
+        '/':(context)=>StartPage(),
+        '/best_recommand':(context)=>BestRecommandPage(),
+        '/location_recommand':(context)=>LocationRecommandPage(),
+      }
     );
   }
 }
+
