@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/':(context)=>StartPage(),
+        '/':(context)=>LocationRecommandPage(),
         '/best_recommand':(context)=>BestRecommandPage(),
-        '/location_recommand':(context)=>LocationRecommandPage(),
+        '/location_recommand':(context)=>StartPage(),
       }
     );
   }
