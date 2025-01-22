@@ -73,9 +73,6 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
           _buildCustomWidget(25,70,70,"광진",292,218),
           ]
           ),
-
-
-
     );
   }
   Widget _buildCustomWidget(int num,double width, double height, String location,double x,double y)
@@ -84,7 +81,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
     return AnimatedContainer(
       width: secondsRemaining == 0  ?  width : 100,
       height: secondsRemaining == 0  ?  height : 100,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: 1),
       curve: Curves.elasticInOut,
       child: Image.asset("images/${location}구.png"),
 
@@ -104,7 +101,6 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
         else{
           secondsRemaining--;
           timer.isActive ? '타이머 실행중' : '타이머 죽음';
-
         }
       });
     });
