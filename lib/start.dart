@@ -12,11 +12,34 @@ class StartPage extends StatefulWidget {
 class _StartPageState extends State<StartPage> {
   String _selectedLanguage = "한국어";
   final LanguageProvider _languageProvider = LanguageProvider();
+  double _imageLeft = -350; // 초기 위치
+  bool _isAnimationCompleted = false;
+  bool _isContentVisible = false;
 
   @override
   void initState() {
     super.initState();
     _fetchLanguage();
+    _startImageAnimation();
+  }
+
+  void _startImageAnimation() {
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() {
+        _imageLeft = -220;
+      });
+
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          _isAnimationCompleted = true;
+        });
+        Future.delayed(const Duration(milliseconds: 500), () {
+          setState(() {
+            _isContentVisible = true;
+          });
+        });
+      });
+    });
   }
 
   void _saveLanguage(String language) async {
@@ -41,7 +64,6 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-
   void _showLanguageDialog() {
     showDialog(
       context: context,
@@ -52,81 +74,13 @@ class _StartPageState extends State<StartPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  _saveLanguage("한국어");
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("한국어"),
-              ),
+              _languageButton("한국어"),
               const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  _saveLanguage("영어");
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("ENG"),
-              ),
+              _languageButton("ENG"),
               const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  _saveLanguage("일본어"); // API 호출
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("日本語"),
-              ),
+              _languageButton("日本語"),
               const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  _saveLanguage("중국어"); // API 호출
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("中國語"),
-              ),
+              _languageButton("中國語"),
             ],
           ),
           actions: [
@@ -135,14 +89,37 @@ class _StartPageState extends State<StartPage> {
                 Navigator.pop(context);
               },
               child: const Text("닫기",
-                style: TextStyle(
-                  fontSize: 17,
-                ),
+                  style: TextStyle(
+                    fontSize: 17,
+                  )
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _languageButton(String language) {
+    return ElevatedButton(
+      onPressed: () {
+        _saveLanguage(language);
+        Navigator.pop(context);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white.withAlpha(230),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(255), // 모서리 둥글게
+          side: const BorderSide(color: Colors.white, width: 2), // 테두리 추가
+        ),
+        minimumSize: const Size(180, 60),
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        textStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      child: Text(language),
     );
   }
 
@@ -160,61 +137,69 @@ class _StartPageState extends State<StartPage> {
       child: Scaffold(
         body: Stack(
           children: [
-            Positioned(
-              left: - 220, // x 좌표
-              top: 0,  // y 좌표
+            AnimatedPositioned(
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOut,
+              left: _imageLeft,
+              top: 0,
               child: Image.asset(
                 "images/seoul.png",
-
               ),
             ),
-            // Container(
-            //   decoration: const BoxDecoration(
-            //     image: DecorationImage(
-            //       image: AssetImage("images/seoul.png"),
-            //       fit: BoxFit.cover,
-            //         alignment: Alignment.topLeft
-            //     ),
-            //   ),
-            // ),
-            Positioned(
-              top: 40,
-              right: 20,
-              child: ElevatedButton(
-                onPressed: _showLanguageDialog,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black.withAlpha(30),
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text("LANG"),
-              ),
-            ),
-            Positioned(
-              bottom: 200,
-              left: 0,
-              right: 0,
-              child: Column(
-                children: [
-                  Text(
-                    "환영합니다!",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 45,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "화면을 터치해주세요",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
+            if (_isAnimationCompleted)
+              AnimatedOpacity(
+                opacity: _isAnimationCompleted ? 1 : 0,
+                duration: const Duration(milliseconds: 800),
+                child: Stack(
+                  children: [
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOut,
+                      top: _isContentVisible ? 40 : -50, // 버튼이 위에서 아래로 등장
+                      right: 20,
+                      child: ElevatedButton(
+                        onPressed: _showLanguageDialog,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black.withAlpha(30),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text("LANG"),
+                      ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      bottom: 200,
+                      left: 0,
+                      right: 0,
+                      child: AnimatedOpacity(
+                        opacity: _isContentVisible ? 1 : 0,
+                        duration: const Duration(milliseconds: 800),
+                        child: Column(
+                          children: [
+                            Text(
+                              "환영합니다!",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 45,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              "화면을 터치해주세요",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
