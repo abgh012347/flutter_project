@@ -73,9 +73,6 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
           _buildCustomWidget(25,70,70,"광진",292,218),
           ]
           ),
-
-
-
     );
   }
   Widget _buildCustomWidget(int num,double width, double height, String location,double x,double y)

@@ -1,16 +1,20 @@
 class LocationInfo{
-  final int id;
-  final String locationName;
-  final String imgUrl;
+  final int resource_id;
+  final String place_name;
+  final String place_description;
+  final String img_src;
+  final String place_subway;
 
-  LocationInfo({required this.id,required this.locationName,required this.imgUrl});
+  LocationInfo({required this.resource_id, required this.place_name, required
+  this.place_description, required this.img_src, required this.place_subway});
 
   factory LocationInfo.fromJson(Map<String,dynamic> json){
     return LocationInfo(
-        id: json['id'],
-        locationName: json['locationName'],
-        imgUrl: json['imgUrl'],
-        // balance: json['balance']
+      resource_id: json['resource_id'],
+      place_name: json['place_name'],
+      place_description: json['place_description'],
+      img_src: json['img_src'],
+      place_subway: json['place_subway'],
     );
   }
 }
