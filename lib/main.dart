@@ -16,10 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       routes: {
-        '/':(context)=>BestRecommandPage(),
-        '/best_recommand':(context)=>LocationRecommandPage(),
-        '/location_recommand':(context)=>StartPage(),
+        '/':(context)=>StartPage(),
+        '/best_recommand':(context)=>BestRecommandPage(),
+        '/location_recommand':(context)=>LocationRecommandPage(),
       }
     );
   }
