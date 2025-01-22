@@ -104,7 +104,6 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
         else{
           secondsRemaining--;
           timer.isActive ? '타이머 실행중' : '타이머 죽음';
-
         }
       });
     });
