@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'best_recommand.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -8,8 +9,183 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
+  String _selectedLanguage = "한국어";
+
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.9),
+          title: const Text("언어 설정"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedLanguage = "한국어";
+                  });
+                  Navigator.pop(context,);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withAlpha(230),
+                  shadowColor: Colors.black.withAlpha(230),
+                  elevation: 5,
+                  minimumSize: const Size(180, 60),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text("한국어"),
+              ),
+              const SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedLanguage = "영어";
+                  });
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withAlpha(230),
+                  shadowColor: Colors.black.withAlpha(230),
+                  elevation: 5,
+                  minimumSize: const Size(180, 60),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text("영어"),
+              ),
+              const SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedLanguage = "일본어";
+                  });
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withAlpha(230),
+                  shadowColor: Colors.black.withAlpha(230),
+                  elevation: 5,
+                  minimumSize: const Size(180, 60),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text("일본어"),
+              ),
+              const SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedLanguage = "중국어";
+                  });
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withAlpha(230),
+                  shadowColor: Colors.black.withAlpha(230),
+                  elevation: 5,
+                  minimumSize: const Size(180, 60),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text("중국어"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("취소",
+                style: TextStyle(
+                  fontSize: 17,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _goToNextPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BestRecommandPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return GestureDetector(
+      onTap: _goToNextPage,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("images/seoul.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: ElevatedButton(
+                onPressed: _showLanguageDialog,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.7),
+                  foregroundColor: Colors.black,
+                ),
+                child: const Text("Language"),
+              ),
+            ),
+            Positioned(
+              bottom: 200,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  Text(
+                    "환영합니다!",
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "화면을 터치해주세요",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
