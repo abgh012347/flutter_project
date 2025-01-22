@@ -17,10 +17,10 @@ class _BestRecommandPageState extends State<BestRecommandPage>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 1.0, end: 1.5).animate(_controller)
+    _animation = Tween<double>(begin: 1.0, end: 2).animate(_controller)
       ..addListener(() {
         setState(() {});
       });
