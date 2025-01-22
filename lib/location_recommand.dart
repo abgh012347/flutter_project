@@ -84,7 +84,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
     return AnimatedContainer(
       width: secondsRemaining == 0  ?  width : 100,
       height: secondsRemaining == 0  ?  height : 100,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: 1),
       curve: Curves.elasticInOut,
       child: Image.asset("images/${location}구.png"),
 
