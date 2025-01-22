@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/language_provider.dart';
 import 'best_recommand.dart';
 
 class StartPage extends StatefulWidget {
@@ -10,23 +11,51 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   String _selectedLanguage = "한국어";
+  final LanguageProvider _languageProvider = LanguageProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLanguage();
+  }
+
+  void _saveLanguage(String language) async {
+    try {
+      await _languageProvider.saveLanguage(language);
+      setState(() {
+        _selectedLanguage = language;
+      });
+    } catch (e) {
+      debugPrint("Failed to save language: ${e}");
+    }
+  }
+
+  void _fetchLanguage() async {
+    try {
+      String language = await _languageProvider.fetchCurrentLanguage();
+      setState(() {
+        _selectedLanguage = language;
+      });
+    } catch (e) {
+      debugPrint("Failed to fetch language: $e");
+    }
+  }
+
 
   void _showLanguageDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.9),
+          backgroundColor: Colors.white.withAlpha(230),
           title: const Text("언어 설정"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "한국어";
-                  });
-                  Navigator.pop(context,);
+                  _saveLanguage("한국어");
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white.withAlpha(230),
@@ -44,9 +73,7 @@ class _StartPageState extends State<StartPage> {
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "영어";
-                  });
+                  _saveLanguage("영어");
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -65,9 +92,7 @@ class _StartPageState extends State<StartPage> {
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "일본어";
-                  });
+                  _saveLanguage("일본어"); // API 호출
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -86,9 +111,7 @@ class _StartPageState extends State<StartPage> {
               const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "중국어";
-                  });
+                  _saveLanguage("중국어"); // API 호출
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -111,7 +134,7 @@ class _StartPageState extends State<StartPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("취소",
+              child: const Text("닫기",
                 style: TextStyle(
                   fontSize: 17,
                 ),
