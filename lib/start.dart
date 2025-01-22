@@ -37,7 +37,7 @@ class _StartPageState extends State<StartPage> {
         _selectedLanguage = language;
       });
     } catch (e) {
-      debugPrint("Failed to fetch language: $e");
+      debugPrint("Failed to fetch language: ${e}");
     }
   }
 
@@ -87,7 +87,7 @@ class _StartPageState extends State<StartPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: const Text("영어"),
+                child: const Text("ENG"),
               ),
               const SizedBox(height: 15),
               ElevatedButton(
@@ -106,7 +106,7 @@ class _StartPageState extends State<StartPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: const Text("일본어"),
+                child: const Text("日本語"),
               ),
               const SizedBox(height: 15),
               ElevatedButton(
@@ -125,7 +125,7 @@ class _StartPageState extends State<StartPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: const Text("중국어"),
+                child: const Text("中國語"),
               ),
             ],
           ),
@@ -160,24 +160,33 @@ class _StartPageState extends State<StartPage> {
       child: Scaffold(
         body: Stack(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("images/seoul.png"),
-                  fit: BoxFit.cover,
-                ),
+            Positioned(
+              left: - 220, // x 좌표
+              top: 0,  // y 좌표
+              child: Image.asset(
+                "images/seoul.png",
+
               ),
             ),
+            // Container(
+            //   decoration: const BoxDecoration(
+            //     image: DecorationImage(
+            //       image: AssetImage("images/seoul.png"),
+            //       fit: BoxFit.cover,
+            //         alignment: Alignment.topLeft
+            //     ),
+            //   ),
+            // ),
             Positioned(
               top: 40,
               right: 20,
               child: ElevatedButton(
                 onPressed: _showLanguageDialog,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.7),
-                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.black.withAlpha(30),
+                  foregroundColor: Colors.white,
                 ),
-                child: const Text("Language"),
+                child: const Text("LANG"),
               ),
             ),
             Positioned(
@@ -190,7 +199,7 @@ class _StartPageState extends State<StartPage> {
                     "환영합니다!",
                     style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 25,
+                        fontSize: 45,
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
@@ -199,7 +208,7 @@ class _StartPageState extends State<StartPage> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 35,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
