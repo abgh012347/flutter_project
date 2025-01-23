@@ -3,7 +3,9 @@ import 'package:flutter_project/language_provider.dart';
 import 'best_recommand.dart';
 
 class StartPage extends StatefulWidget {
-  const StartPage({super.key});
+  final ValueChanged<String> onLanguageSelected;
+
+  const StartPage({super.key, required this.onLanguageSelected});
 
   @override
   State<StartPage> createState() => _StartPageState();
@@ -15,6 +17,18 @@ class _StartPageState extends State<StartPage> {
   double _imageLeft = -350; // 초기 위치
   bool _isAnimationCompleted = false;
   bool _isContentVisible = false;
+
+  void _saveLanguage(String language) async {
+    try {
+      await _languageProvider.saveLanguage(language);
+      setState(() {
+        _selectedLanguage = language;
+      });
+      widget.onLanguageSelected(language); // Call the callback function
+    } catch (e) {
+      debugPrint("Failed to save language: ${e}");
+    }
+  }
 
   final Map<String, Map<String, String>> languageData = {
     "한국어": {
@@ -69,17 +83,6 @@ class _StartPageState extends State<StartPage> {
     }
   }
 
-  void _saveLanguage(String language) async {
-    try {
-      await _languageProvider.saveLanguage(language);
-      setState(() {
-        _selectedLanguage = language;
-      });
-    } catch (e) {
-      debugPrint("Failed to save language: ${e}");
-    }
-  }
-
   void _startImageAnimation() {
     Future.delayed(const Duration(milliseconds: 2000), () {
       setState(() {
@@ -102,7 +105,11 @@ class _StartPageState extends State<StartPage> {
   void _goToNextPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const BestRecommandPage()),
+      MaterialPageRoute(
+        builder: (context) => BestRecommandPage(
+          selectedLanguage: _selectedLanguage, // Pass selected language as argument
+        ),
+      ),
     );
   }
 
