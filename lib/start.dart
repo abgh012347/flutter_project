@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/language_provider.dart';
 import 'best_recommand.dart';
 
 class StartPage extends StatefulWidget {
@@ -10,117 +11,92 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   String _selectedLanguage = "한국어";
+  final LanguageProvider _languageProvider = LanguageProvider();
+  double _imageLeft = -350; // 초기 위치
+  bool _isAnimationCompleted = false;
+  bool _isContentVisible = false;
 
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.9),
-          title: const Text("언어 설정"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "한국어";
-                  });
-                  Navigator.pop(context,);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("한국어"),
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "영어";
-                  });
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("영어"),
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "일본어";
-                  });
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("일본어"),
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "중국어";
-                  });
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("중국어"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("취소",
-                style: TextStyle(
-                  fontSize: 17,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+  final Map<String, Map<String, String>> languageData = {
+    "한국어": {
+      "name": "한국어",
+      "guide": "서울 탐방",
+      "tapAnywhere": "아무 곳이나 눌러주세요",
+      "welcome": "환영합니다!",
+      "projectName": "Seoulution", // Project name in Korean pronunciation
+    },
+    "ENG": {
+      "name": "ENG",
+      "guide": "Explore Seoul",
+      "tapAnywhere": "Tap anywhere",
+      "welcome": "Welcome!",
+      "projectName": "Seoulution", // Project name in English pronunciation
+    },
+    "日本語": {
+      "name": "日本語",
+      "guide": "ソウル探検",
+      "tapAnywhere": "どこでもタップしてください",
+      "welcome": "ようこそ",
+      "projectName": "ソウルーション", // Project name in Japanese pronunciation
+    },
+    "中國語": {
+      "name": "中國語",
+      "guide": "探索首尔",
+      "tapAnywhere": "点击任意位置",
+      "welcome": "欢迎",
+      "projectName": "首尔解决方案", // Project name in Chinese pronunciation
+    },
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    await _fetchLanguage();
+    _startImageAnimation();
+  }
+
+  Future<void> _fetchLanguage() async {
+    try {
+      String language = await _languageProvider.fetchCurrentLanguage();
+      setState(() {
+        _selectedLanguage = language;
+      });
+    } catch (e) {
+      debugPrint("Failed to fetch language: ${e}");
+    }
+  }
+
+  void _saveLanguage(String language) async {
+    try {
+      await _languageProvider.saveLanguage(language);
+      setState(() {
+        _selectedLanguage = language;
+      });
+    } catch (e) {
+      debugPrint("Failed to save language: ${e}");
+    }
+  }
+
+  void _startImageAnimation() {
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      setState(() {
+        _imageLeft = -220;
+      });
+
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          _isAnimationCompleted = true;
+        });
+        Future.delayed(const Duration(milliseconds: 500), () {
+          setState(() {
+            _isContentVisible = true;
+          });
+        });
+      });
+    });
   }
 
   void _goToNextPage() {
@@ -137,55 +113,141 @@ class _StartPageState extends State<StartPage> {
       child: Scaffold(
         body: Stack(
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("images/seoul.png"),
-                  fit: BoxFit.cover,
-                ),
+            AnimatedPositioned(
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOut,
+              left: _imageLeft,
+              top: 0,
+              child: Image.asset(
+                "images/seoul.png",
               ),
             ),
-            Positioned(
-              top: 40,
-              right: 20,
-              child: ElevatedButton(
-                onPressed: _showLanguageDialog,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.7),
-                  foregroundColor: Colors.black,
-                ),
-                child: const Text("Language"),
-              ),
-            ),
-            Positioned(
-              bottom: 200,
-              left: 0,
-              right: 0,
-              child: Column(
-                children: [
-                  Text(
-                    "환영합니다!",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "화면을 터치해주세요",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            if (_isAnimationCompleted)
+              AnimatedOpacity(
+                opacity: _isAnimationCompleted ? 1 : 0,
+                duration: const Duration(milliseconds: 800),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      bottom: 570,
+                      left: 0,
+                      right: 0,
+                      child: AnimatedOpacity(
+                        opacity: _isContentVisible ? 1 : 0,
+                        duration: const Duration(milliseconds: 800),
+                        child: Column(
+                          children: [
+                            Text(
+                              languageData[_selectedLanguage]!['welcome']!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              languageData[_selectedLanguage]!['projectName']!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      top: 60,
+                      left: 60,
+                      child: Text(
+                        languageData[_selectedLanguage]!['guide']!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOut,
+                      top: _isContentVisible ? 55 : -50,
+                      right: 20,
+                      child: DropdownButtonHideUnderline(
+                        child: _buildPopupMenuButton(),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 100, // Moved higher
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Text(
+                            languageData[_selectedLanguage]!['tapAnywhere']!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildPopupMenuButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end, // 메뉴 버튼을 화면 오른쪽 끝에 위치
+      children: <Widget>[
+        Text(
+          languageData[_selectedLanguage]!['name']!, // 현재 선택된 언어 표시
+          style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+        PopupMenuButton<String>(
+          onSelected: (String value) {
+            setState(() {
+              _selectedLanguage = value;
+            });
+            _saveLanguage(value);
+          },
+          itemBuilder: (BuildContext context) => languageData.keys.map((String value) {
+            return PopupMenuItem<String>(
+              value: value,
+              child: Text(languageData[value]!['name']!,
+                style: TextStyle(
+                    color: Colors.black45
+                ),),
+            );
+          }).toList(),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+          offset: const Offset(8.5, 40), // 버튼 바로 아래에서 메뉴 시작
+          color: Colors.transparent, // 메뉴 배경색
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // 메뉴의 모서리 둥글게
+          elevation: 500, // 메뉴의 그림자 높이
+        ),
+      ],
+    );
+  }
+
 }
