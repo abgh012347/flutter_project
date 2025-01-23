@@ -78,7 +78,7 @@ flutter:
   fonts:
     - family: Cherry
       fonts:
-        - asset: fonts/CherryBombOne-Regular.ttf
+        - asset: fonts/Poppins-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
