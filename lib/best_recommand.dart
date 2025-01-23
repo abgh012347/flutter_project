@@ -63,17 +63,17 @@ class _BestRecommandPageState extends State<BestRecommandPage>
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Container(
                 width: double.infinity,
-                color: Colors.blue,
+                color: Colors.white,
                 padding: const EdgeInsets.all(16),
-                alignment: Alignment.center,
+                alignment: Alignment.topCenter,
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: const TextSpan(
                     style: TextStyle(
-                      color: Color(0xFFF0F0F0),
+                      color: Colors.grey,
                       fontSize: 26,
                     ),
                     children: <TextSpan>[
