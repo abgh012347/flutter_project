@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ffi';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -22,6 +25,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
   double _width = 100.0;
   double _height = 100.0;
 
+
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -32,6 +36,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
       _height = _height == 100.0 ? 500.0 : 100.0;
     });
   }
+
 
   @override
   void initState() {
@@ -72,7 +77,9 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
         backgroundColor: Color.fromARGB(255, 34, 163, 255),
         centerTitle: true,
       ),
-      body: Stack(children: [
+      body: Stack(
+          children: [
+
         // Container(
         //       child : Image(image: AssetImage("images/seoul_detail.png"),
         //   fit: BoxFit.cover),
@@ -149,6 +156,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
         ])
       ]),
     );
+
   }
 
   Widget _buildCustomWidget(int num, double width, double height,
@@ -157,11 +165,12 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
     return
 
          AnimatedContainer(
-            width:  secondsRemaining == 0 ? width:_width, //secondsRemaining == 0 ?
-            height: secondsRemaining == 0 ? height:_height,
+            width:  secondsRemaining == 0 ? width:100, //secondsRemaining == 0 ?
+            height: secondsRemaining == 0 ? height:100,
             duration: Duration(seconds: 2),
 
             curve: Curves.bounceInOut,
+
             transform: secondsRemaining == 0
                 ? Matrix4.translationValues(x, y, 0)
                 : num < 12
@@ -169,13 +178,15 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
                     : Matrix4.translationValues(x, -y - 200, 0),
             child: GestureDetector(
                 behavior: HitTestBehavior.deferToChild,
+
+
               onTap: () {
                 print("들어옴");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        SpaceaScreen(space_image: "images/${location}.png"),
+                        SpaceaScreen(space_image: "images/${location}.png",select_value: location),
                   ),
                 );
               }
@@ -204,44 +215,247 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
   }
 }
 
-Future<LocationInfo> fetchData() async {
-  final response = await http.get(Uri.parse("http://10.0.2.2:8080/api/login"));
-  if (response.statusCode == 200) {
-    return LocationInfo.fromJson(json.decode(response.body));
-  } else {
-    throw Exception("추천 장소를 불러오는데 실패하였습니다.");
-  }
-}
+
+
+
 
 class SpaceaScreen extends StatefulWidget {
-  const SpaceaScreen({Key? key, required this.space_image}) : super(key: key);
+  const SpaceaScreen({Key? key, required this.space_image,required this.select_value}) : super(key: key);
 
   final String space_image;
-
+  final String select_value;
   @override
   State<SpaceaScreen> createState() => _SpaceaScreenState();
-} // end of SpaceaScreen
+  } // end of SpaceaScreen
+
 
 class _SpaceaScreenState extends State<SpaceaScreen> {
+  List<dynamic> items = [];
+  bool isLoading = true;
+  void initState(){
+    fetchData();
+  }
+  Future<void> fetchData() async {
+    final response = await http.get(Uri.parse('http://10.0.2.2:8080/api/locations/search?keyword=${widget.select_value}'));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        String responseBody = utf8.decode(response.bodyBytes);
+        items = json.decode(responseBody);
+        isLoading = false;
+      });
+    } else {
+      throw Exception('데이터를 가져오는 데 실패했습니다.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width*0.7;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Show spacea screen'),
+        title: const Text('Show space screen'),
       ),
       body: GestureDetector(
         onTap: () {
           Navigator.pop(context);
         },
         child: Center(
-          child: Hero(
-            tag: 'wowHero',
-            child: Image.asset(
-              widget.space_image,
+          child:Column(
+          // child: Hero(
+          //   tag: 'wowHero',
+            children:[
+              SizedBox(
+                height: 30,
+              ),
+              Image.asset(
+                widget.space_image,
+                // fit: BoxFit.,
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Expanded(
+                child:Container(
+                  height: 400,
+                  child:
+                  isLoading ? Center(child: CircularProgressIndicator())
+                  :
+                    ListView.builder(
+
+                      itemCount: items.length,
+                      itemBuilder: (context,index){
+                        return GestureDetector(
+                          onTap: () {
+                            showPopup(context, items[index]["placeName"],items[index]["imgSrc"], items[index]["placeAddress"], items[index]["placeSubway"],items[index]["placeDescription"]);
+                          },
+                          child: Card(
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 100,
+                                  height: 100,
+                                  child: Container(
+                                    width: 80,
+                                    height: 80,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.network(items[index]['imgSrc'].toString(),
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress)
+                                      {
+                                        if(loadingProgress == null){
+                                          return child;
+                                        }
+                                        else {
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress
+                                                  .expectedTotalBytes != null
+                                                  ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                                  (loadingProgress
+                                                      .expectedTotalBytes ?? 1)
+                                                  : null,
+                                            ),
+                                          ); //
+                                        }
+                                      },
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Center(child: Text('Error loading image')); // 오류 발생 시 메시지 표시
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(padding:  const EdgeInsets.only(left: 10.0),
+                                 child: Column(
+
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+
+                                      Text(items[index]['placeName'],
+                                        style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                    ),),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      SizedBox(
+                                        // width: width+,
+                                        child: Padding(padding:  const EdgeInsets.only(left: 6.0),
+                                          child: Text(items[index]['placeSubway'].toString()
+                                            ,style: TextStyle(
+                                            fontSize: 14,
+                                            // color: Color(0XFFA5A5A5),
+                                            color: Colors.grey[500],
+                                          ),),
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+
+                              ],
+                            ),
+
+                          ),
+                        // title: Text(items[index]['placeName']),
+                        // subtitle: Text(items[index]['placeDescription']),
+                        );
+
+                      })
+                )
+              )
+            ]
+
             ),
           ),
         ),
-      ),
-    );
+      );
+
   }
-} // end of _SpaceaScreenS
+  void showPopup(context,title,image,address,subway,description){
+    showDialog(
+        context: context,
+        builder: (context){
+          return Dialog(
+            child: Container(
+              width: MediaQuery.of(context).size.width*0.8,
+              height: 600,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 40,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+
+                    child: Image.network(
+                      image,
+                      width: 200,
+                      height: 200,),
+                  ),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  Text(title,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),),
+                  SizedBox(
+                      height: 10
+                  ),
+                  Text(address,
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.purple
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(subway,
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.purple
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(description,
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.purple
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.close),
+                    label: Text("close"),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+}
