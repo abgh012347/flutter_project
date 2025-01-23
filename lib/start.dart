@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'best_recommand.dart';
+import 'package:flutter_project/best_recommand.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -9,121 +9,33 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  String _selectedLanguage = "한국어";
+  String selectedLanguage = "한국어";
 
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.9),
-          title: const Text("언어 설정"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "한국어";
-                  });
-                  Navigator.pop(context,);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("한국어"),
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "영어";
-                  });
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("영어"),
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "일본어";
-                  });
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("일본어"),
-              ),
-              const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _selectedLanguage = "중국어";
-                  });
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(230),
-                  shadowColor: Colors.black.withAlpha(230),
-                  elevation: 5,
-                  minimumSize: const Size(180, 60),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  textStyle: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text("중국어"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("취소",
-                style: TextStyle(
-                  fontSize: 17,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // Map to store language codes and their native names and guide texts
+  final Map<String, Map<String, String>> languageData = {
+    "한국어": {
+      "name": "한국어",
+      "guide": "Seoulution",
+      "tapAnywhere": "아무 곳이나 눌러주세요",
+    },
+    "영어": {
+      "name": "English",
+      "guide": "Seoulution",
+      "tapAnywhere": "Tap anywhere",
+    },
+    "일본어": {
+      "name": "日本語",
+      "guide": "ソウルルーション",
+      "tapAnywhere": "どこでもタップしてください",
+    },
+    "중국어": {
+      "name": "中國語",
+      "guide": "首尔路昇",
+      "tapAnywhere": "点击任意位置",
+    },
+  };
 
-  void _goToNextPage() {
+  void goToNextPage() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const BestRecommandPage()),
@@ -133,54 +45,89 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _goToNextPage,
+      onTap: goToNextPage,
       child: Scaffold(
         body: Stack(
+          fit: StackFit.expand,
           children: [
-            Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("images/seoul.png"),
-                  fit: BoxFit.cover,
-                ),
-              ),
+            Image.asset(
+              "images/seoul.png",
+              fit: BoxFit.cover,
             ),
             Positioned(
               top: 40,
               right: 20,
-              child: ElevatedButton(
-                onPressed: _showLanguageDialog,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.7),
-                  foregroundColor: Colors.black,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(50),
                 ),
-                child: const Text("Language"),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 9, vertical: 19),
+                child: DropdownButton<String>(
+                  value: selectedLanguage,
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors
+                      .white38),
+                  iconSize: 24,
+                  elevation: 16,
+                  style: const TextStyle(
+                      color: Colors.white70, fontWeight: FontWeight.bold),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.transparent,
+                  ),
+                  dropdownColor: Colors.black.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(12),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedLanguage = newValue!;
+                    });
+                  },
+                  items: languageData.keys
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(languageData[value]!['name']!),
+                    );
+                  }).toList(),
+                ),
               ),
             ),
             Positioned(
-              bottom: 200,
+              top: 65,
+              left: 30,
+              child: Text(
+                languageData[selectedLanguage]!['guide']!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Cherry',
+                ),
+              ),
+            ),
+            Positioned( // Position "Tap anywhere" message higher with background
+              bottom: 100, // Moved higher
               left: 0,
               right: 0,
-              child: Column(
-                children: [
-                  Text(
-                    "환영합니다!",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
+              child: Center(
+                child: Container( // Added Container for background
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.5), // Transparent black background
+                    borderRadius: BorderRadius.circular(20), // Rounded corners
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "화면을 터치해주세요",
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 10), // Added padding
+                  child: Text(
+                    languageData[selectedLanguage]!['tapAnywhere']!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ],
