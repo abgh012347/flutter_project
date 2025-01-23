@@ -33,7 +33,6 @@ class _LocationRecommandPageState extends State<LocationRecommandPage> {
       appBar: AppBar(
         title: Text("구별 추천 장소",
         style: TextStyle(
-          fontSize: 25,
           color: Colors.white,
         ),),
         backgroundColor: Color.fromARGB(255, 34, 163, 255),
