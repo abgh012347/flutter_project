@@ -44,7 +44,10 @@ class _MyAppState extends State<MyApp> {
           selectedLanguage: ModalRoute.of(context)!.settings.arguments
           as String, // Access the selected language from arguments
         ),
-        '/location_recommand': (context) => const LocationRecommandPage(),
+        '/location_recommand': (context) => LocationRecommandPage(
+          selectedLanguage: ModalRoute.of(context)!.settings.arguments
+          as String,
+        ),
       },
     );
   }

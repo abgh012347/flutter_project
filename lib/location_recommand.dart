@@ -9,9 +9,11 @@ import 'package:flutter/scheduler.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_project/location_info.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class LocationRecommandPage extends StatefulWidget {
-  const LocationRecommandPage({super.key});
+  final String selectedLanguage;
+  const LocationRecommandPage({super.key,required this.selectedLanguage});
 
   @override
   State<LocationRecommandPage> createState() => _LocationRecommandPageState();
@@ -20,7 +22,7 @@ class LocationRecommandPage extends StatefulWidget {
 class _LocationRecommandPageState extends State<LocationRecommandPage>
     with SingleTickerProviderStateMixin {
   int rating_time = 0;
-  int secondsRemaining = 2;
+  int secondsRemaining = 1;
   late Timer timer;
   double _width = 100.0;
   double _height = 100.0;
@@ -42,7 +44,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     // _animation = Tween<double>(begin: 1.0, end: 1.5).animate(CurvedAnimation(
@@ -53,13 +55,6 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
     startTimer();
   }
 
-  //
-  // _onTap(double x,double y) {
-  //   setState(() {
-  //     _width = _width == 0 ? _width = 300.0 : _width = 100.0;
-  //     _height = _height == 0 ? _height = 300.0 : _height = 100.0;
-  //   });
-  //   }
 
   @override
   Widget build(BuildContext context) {
@@ -167,15 +162,15 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
          AnimatedContainer(
             width:  secondsRemaining == 0 ? width:100, //secondsRemaining == 0 ?
             height: secondsRemaining == 0 ? height:100,
-            duration: Duration(seconds: 2),
+            duration: Duration(milliseconds: 500),
 
-            curve: Curves.bounceInOut,
-
-            transform: secondsRemaining == 0
-                ? Matrix4.translationValues(x, y, 0)
-                : num < 12
-                    ? Matrix4.translationValues(x, y + 800, 0)
-                    : Matrix4.translationValues(x, -y - 200, 0),
+            curve: Curves.fastEaseInToSlowEaseOut,
+            transform: Matrix4.translationValues(x, y, 0),
+            // transform: secondsRemaining == 0
+            //     ? Matrix4.translationValues(x, y, 0)
+            //     : num < 12
+            //         ? Matrix4.translationValues(x, y + 800, 0)
+            //         : Matrix4.translationValues(x, -y - 200, 0),
             child: GestureDetector(
                 behavior: HitTestBehavior.deferToChild,
 
@@ -186,7 +181,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        SpaceaScreen(space_image: "images/${location}.png",select_value: location),
+                        SpaceaScreen(space_image: "images/${location}.png",select_value: location,selectedLanguage: widget.selectedLanguage,),
                   ),
                 );
               }
@@ -220,23 +215,129 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
 
 
 class SpaceaScreen extends StatefulWidget {
-  const SpaceaScreen({Key? key, required this.space_image,required this.select_value}) : super(key: key);
+  const SpaceaScreen({Key? key, required this.space_image,required this.select_value,required this.selectedLanguage}) : super(key: key);
 
   final String space_image;
   final String select_value;
+  final String selectedLanguage;
   @override
   State<SpaceaScreen> createState() => _SpaceaScreenState();
   } // end of SpaceaScreen
 
 
+
+
 class _SpaceaScreenState extends State<SpaceaScreen> {
   List<dynamic> items = [];
   bool isLoading = true;
+
+
   void initState(){
     fetchData();
   }
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:8080/api/locations/search?keyword=${widget.select_value}'));
+    int selectedLanguageNum = 0;
+    String keyword = widget.select_value;
+    switch(widget.selectedLanguage){
+      case "한국어" :
+        selectedLanguageNum = 1;
+        break;
+      case "ENG" :
+        selectedLanguageNum = 2;
+        break;
+      case "中國語" :
+        selectedLanguageNum = 3;
+        break;
+      case "日本語" :
+        selectedLanguageNum = 4;
+        break;
+      default:
+        break;
+    }
+    //중국어
+    if(selectedLanguageNum == 2) {
+      switch (widget.select_value) {
+        case "종로구" :
+          keyword = "钟路区";
+          break;
+        case "중구" :
+          keyword = "中区";
+          break;
+        case "용산구" :
+          keyword = "龙山区";
+          break;
+        case "성동구" :
+          keyword = "城东区";
+          break;
+        case "광진구" :
+          keyword = "光津区";
+          break;
+        case "동대문구" :
+          keyword = "东大门区";
+          break;
+        case "중랑구" :
+          keyword = "中浪区";
+          break;
+        case "성북구" :
+          keyword = "城北区";
+          break;
+        case "강북구" :
+          keyword = "江北区";
+          break;
+        case "도봉구" :
+          keyword = "道峰区";
+          break;
+        case "노원구" :
+          keyword = "诺原区";
+          break;
+        case "은평구" :
+          keyword = "银平区";
+          break;
+        case "서대문구" :
+          keyword = "西大门区";
+          break;
+        case "마포구" :
+          keyword = "麻浦区";
+          break;
+        case "양천구" :
+          keyword = "杨川区";
+          break;
+        case "강서구" :
+          keyword = "江西区";
+          break;
+        case "구로구" :
+          keyword = "九老区";
+          break;
+        case "금천구" :
+          keyword = "金泉区";
+          break;
+        case "영등포구" :
+          keyword = "永登浦区";
+          break;
+        case "동작구" :
+          keyword = "铜雀区";
+          break;
+        case "관악구" :
+          keyword = "观岳区";
+          break;
+        case "서초구" :
+          keyword = "西小区";
+          break;
+        case "강남구" :
+          keyword = "江南区";
+          break;
+        case "송파구" :
+          keyword = "松坡区";
+          break;
+        case "강동구" :
+          keyword = "江东区";
+          break;
+        default:
+          break;
+      }
+    }
+
+    final response = await http.get(Uri.parse('http://10.0.2.2:8080/api/locations/search/${keyword}/${selectedLanguageNum}'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -249,12 +350,14 @@ class _SpaceaScreenState extends State<SpaceaScreen> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width*0.7;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Show space screen'),
+        title: const Text('선택한 장소'),
       ),
       body: GestureDetector(
         onTap: () {
@@ -268,6 +371,11 @@ class _SpaceaScreenState extends State<SpaceaScreen> {
               SizedBox(
                 height: 30,
               ),
+              // CachedNetworkImage(
+              //     imageUrl: widget.space_image,
+              //     placeholder: (context,url) => const CircularProgressIndicator(),
+              //     // errorWidget: (context,url,error) => Icon(Icons.error),
+              // ),
               Image.asset(
                 widget.space_image,
                 // fit: BoxFit.,
@@ -288,7 +396,8 @@ class _SpaceaScreenState extends State<SpaceaScreen> {
                         return GestureDetector(
                           onTap: () {
                             showPopup(context, items[index]["placeName"],items[index]["imgSrc"], items[index]["placeAddress"], items[index]["placeSubway"],items[index]["placeDescription"]);
-                          },
+                            // PageRouteBuilder(transitionDuration: const Duration(milliseconds: 1000),)
+                            },
                           child: Card(
                             child: Row(
                               children: [
@@ -300,31 +409,17 @@ class _SpaceaScreenState extends State<SpaceaScreen> {
                                     height: 80,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15),
-                                      child: Image.network(items[index]['imgSrc'].toString(),
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress)
-                                      {
-                                        if(loadingProgress == null){
-                                          return child;
-                                        }
-                                        else {
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress
-                                                  .expectedTotalBytes != null
-                                                  ? loadingProgress
-                                                  .cumulativeBytesLoaded /
-                                                  (loadingProgress
-                                                      .expectedTotalBytes ?? 1)
-                                                  : null,
-                                            ),
-                                          ); //
-                                        }
-                                      },
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Center(child: Text('Error loading image')); // 오류 발생 시 메시지 표시
-                                        },
+                                      child:
+                                      Hero(
+                                        tag: "cardvalue",
+
+                                        child: CachedNetworkImage(
+                                          imageUrl: items[index]['imgSrc'].toString(),
+                                          placeholder: (context,url) => const CircularProgressIndicator(),
+                                          // errorWidget: (context,url,error) => Icon(Icons.error),
+                                        ),
                                       ),
+
                                     ),
                                   ),
                                 ),
@@ -379,83 +474,135 @@ class _SpaceaScreenState extends State<SpaceaScreen> {
 
   }
   void showPopup(context,title,image,address,subway,description){
+
     showDialog(
         context: context,
         builder: (context){
           return Dialog(
-            child: Container(
-              width: MediaQuery.of(context).size.width*0.8,
-              height: 600,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 40,
-                  ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width*0.8,
+                height: 550,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(title,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),),
+                    SizedBox(height: 10,),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.linear,
+                          child: Image.network(
+                            image,
+                            width:  300 ,
+                            height: 200 ,
+                            fit: BoxFit.cover,),
+                        ),
 
-                    child: Image.network(
-                      image,
-                      width: 200,
-                      height: 200,),
-                  ),
-                  // SizedBox(
-                  //   height: 10,
-                  // ),
-                  Text(title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),),
-                  SizedBox(
-                      height: 10
-                  ),
-                  Text(address,
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.purple
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(subway,
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.purple
+                    SizedBox(
+                      height: 30,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(description,
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.purple
+
+                    Row(
+
+                      children:[
+                        SizedBox(width: 10,),
+                        Text("주소 : ",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black
+                        ),),
+
+                        Expanded(
+                          child: Text(address,
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black
+                          ),
+                          maxLines: 3,
+                          textAlign: TextAlign.left,
+                                              ),
+                        ),
+
+                      ]
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: (){
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.close),
-                    label: Text("close"),
-                  ),
-                ],
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 10,),
+                        Text("인근역 : ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black
+                          ),),
+                        Expanded(
+                        child: Text(subway,
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black
+                          ),
+                          maxLines: 3,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      ]
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(width: 10,),
+                        Text("설명 : ",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black
+                          ),),
+                        Expanded(
+                        child: Text(description,
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black
+                          ),
+                          textAlign: TextAlign.left,
+                          maxLines: 5,
+                        ),
+                      ),
+                      ]
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: (){
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.close),
+                      label: Text("close"),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
         });
+
+
   }
 }

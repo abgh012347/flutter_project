@@ -58,7 +58,7 @@ class _BestRecommandPageState extends State<BestRecommandPage>
     return GestureDetector(
       onTap: () {
         _controller.forward().then((value) =>
-            _navigateToLocationRecommandPage(context));
+            _navigateToLocationRecommandPage(context, widget.selectedLanguage));
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -110,11 +110,11 @@ class _BestRecommandPageState extends State<BestRecommandPage>
     );
   }
 
-  void _navigateToLocationRecommandPage(BuildContext context) {
+  void _navigateToLocationRecommandPage(BuildContext context,String languages) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const LocationRecommandPage(),
+        builder: (context) => LocationRecommandPage(selectedLanguage: languages),
       ),
     ).then((value) {
       _controller.reset();
