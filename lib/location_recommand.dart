@@ -66,7 +66,7 @@ class _LocationRecommandPageState extends State<LocationRecommandPage>
           "구별 추천 장소",
           style: TextStyle(
             fontSize: 25,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         backgroundColor: Color.fromARGB(255, 34, 163, 255),

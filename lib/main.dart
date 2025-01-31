@@ -20,11 +20,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Cherry',
         popupMenuTheme: PopupMenuThemeData(
           color: Colors.grey[800],
         ),
+
       ),
       home: StartPage(
         onLanguageSelected: (language) { // Callback to update selected language
